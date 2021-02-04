@@ -12,11 +12,10 @@
     <input type="text" name="findName">
     <input  name="action" type="submit" value="Search" >
 </form>
-
+<button><a href="/products?action=sort&name">Sort by name</a></button>
 <%--<button><a href="/products?action=search&name=${product.getName()}">Search</a></button>--%>
 
 <table>
-
     <tr>
         <th>Name</th>
         <th>Price</th>

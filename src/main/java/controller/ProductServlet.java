@@ -44,10 +44,25 @@ public class ProductServlet extends HttpServlet {
                 findByName(request, response);
                 break;
             }
+            case "sort":
+                sortByName(request,response,productService.sort());
+                break;
             default: {
                 showAllProducts(request, response);
                 break;
             }
+        }
+    }
+
+    private void sortByName(HttpServletRequest request, HttpServletResponse response, List<Product> product) {
+        request.setAttribute("products",product);
+        RequestDispatcher requestDispatcher =request.getRequestDispatcher("product/listProduct.jsp");
+        try {
+            requestDispatcher.forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -73,7 +88,6 @@ public class ProductServlet extends HttpServlet {
     }
 
 //    private void findByName(HttpServletRequest request, HttpServletResponse response) {
-//        String search = request.getParameter("search");
 //        String name = request.getParameter("name");
 //        Product product = productService.findByName(name);
 //
@@ -90,19 +104,19 @@ public class ProductServlet extends HttpServlet {
 //                e.printStackTrace();
 //            }
 //        }
-////        if (product == null) {
-////            dispatcher = request.getRequestDispatcher("error-404.jsp");
-////        } else {
-////            request.setAttribute("product", product);
-////            dispatcher = request.getRequestDispatcher("product/find.jsp");
-////        }
-////        try {
-////            dispatcher.forward(request, response);
-////        } catch (ServletException e) {
-////            e.printStackTrace();
-////        } catch (IOException e) {
-////            e.printStackTrace();
-////        }
+//        if (product == null) {
+//            dispatcher = request.getRequestDispatcher("error-404.jsp");
+//        } else {
+//            request.setAttribute("product", product);
+//            dispatcher = request.getRequestDispatcher("product/find.jsp");
+//        }
+//        try {
+//            dispatcher.forward(request, response);
+//        } catch (ServletException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 //    }
 
     private void showAllProducts(HttpServletRequest request, HttpServletResponse response) {

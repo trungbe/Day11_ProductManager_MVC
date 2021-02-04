@@ -9,9 +9,9 @@ public interface IGeneralService<T> {
 
     T findById(int id);
 
-    T findByName(String name);
-
     boolean update(T t);
 
     boolean delete(int id);
+
+    List<T> sort();
 }

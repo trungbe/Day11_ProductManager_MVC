@@ -17,7 +17,8 @@ import java.util.List;
 @WebServlet(name = "ProductServlet", urlPatterns = "/products")
 public class ProductServlet extends HttpServlet {
     private static final IProductService productService = new ProductService();
-//doGet
+
+    //------------------------------doGet
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
@@ -167,7 +168,7 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-// doPost
+    //------------------- doPost
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
@@ -179,8 +180,7 @@ public class ProductServlet extends HttpServlet {
                 break;
             }
             case "edit": {
-//                updateProduct(request, response);
-                update(request,response);
+                updateProduct(request, response);
                 break;
             }
             case "delete": {
@@ -192,17 +192,16 @@ public class ProductServlet extends HttpServlet {
     }
 
 
-
-    private void createProduct(HttpServletRequest request, HttpServletResponse response) {
+    private void createProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = (int) (Math.random() * 10000000);
         String name = request.getParameter("name");
         int price = Integer.parseInt(request.getParameter("price"));
         String description = request.getParameter("description");
         String producer = request.getParameter("producer");
-
         Product product = new Product(id, name, price, description, producer);
-        productService.save(product);
+        productService.create(product);
         RequestDispatcher dispatcher = request.getRequestDispatcher("product/create.jsp");
+
         try {
             dispatcher.forward(request, response);
         } catch (ServletException e) {
@@ -212,42 +211,32 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-    private void updateProduct(HttpServletRequest request, HttpServletResponse response) {
-        int id = Integer.parseInt(request.getParameter("id"));
-        int price = Integer.parseInt(request.getParameter("price"));
-        String description = request.getParameter("description");
-        String producer = request.getParameter("producer");
-        String name = request.getParameter("name");
-        Product product = new Product(id, name, price, description, producer);
-        productService.updateById(id, product);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("product/update.jsp");
-        try {
-            dispatcher.forward(request, response);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void updateProduct(HttpServletRequest request, HttpServletResponse response) {
+//        int id = Integer.parseInt(request.getParameter("id"));
+//        int price = Integer.parseInt(request.getParameter("price"));
+//        String description = request.getParameter("description");
+//        String producer = request.getParameter("producer");
+//        String name = request.getParameter("name");
+//        Product product = new Product(id, name, price, description, producer);
+//        productService.updateById(id, product);
+//        RequestDispatcher dispatcher = request.getRequestDispatcher("product/update.jsp");
+//        try {
+//            dispatcher.forward(request, response);
+//        } catch (ServletException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    private void deleteProduct(HttpServletRequest request, HttpServletResponse response) {
-        int id = Integer.parseInt(request.getParameter("id"));
-        productService.deleteById(id);
-        try {
-            response.sendRedirect("/products");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void updateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         int price = Integer.parseInt(request.getParameter("price"));
         String description = request.getParameter("description");
         String producer = request.getParameter("producer");
 
-        Product p = new Product(id,name,price,description,producer);
+        Product p = new Product(id, name, price, description, producer);
         productService.update(p);
         response.sendRedirect("/products");
 //        RequestDispatcher requestDispatcher = request.getRequestDispatcher("product/update.jsp");
@@ -256,4 +245,9 @@ public class ProductServlet extends HttpServlet {
 
     }
 
+    private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        productService.delete(id);
+        response.sendRedirect("/products");
+    }
 }

@@ -8,20 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductService implements IProductService {
+    public static final String SHOW_ALL_PRODUCT = "select  * from product";
+    public static final String CREATE_NEW_PRODUCT = "insert into product" + " (name,price,description,producer) values" + "(?,?,?,?);";
+    public static final String FIND_PRODUCT_BY_ID = "select  * from product where id=? ";
+    public static final String UPDATE_PRODUCT = "update product set name = ?,price =?,description=?,producer=? where id= ?";
+    public static final String DELETE_PRODUCT = "delete from product where id= ?";
     private static Map<Integer, Product> products;
 
-//    static {
-//        products = new HashMap<>();
-//        products.put(1, new Product(1, "Shoe Nike", 100, "Just Do It", "Nike"));
-//        products.put(2, new Product(2, "T-shirt Adidas", 300, "Impossible is Nothing", "Adidas"));
-//        products.put(3, new Product(3, "Vans", 200, "Vans of the walk", "Vans"));
-//        products.put(4, new Product(4, "Bitis shoe", 500, "Nang niu ban chan Viet", "Bitis"));
-//        products.put(5, new Product(5, "Fila", 600, "Fila lala", "Fila"));
-//        products.put(6, new Product(6, "Puma", 900, "Unleash your wild side", "Puma"));
-//        products.put(7, new Product(7, "Reebok", 800, "Reebok ", "Reebok International Limited"));
-//    }
 
-    //JDBC Connect
+//    JDBC Connect
 
     protected Connection getConnection() {
         Connection connection = null;
@@ -47,7 +42,7 @@ public class ProductService implements IProductService {
         List<Product> products = new ArrayList<>();
         Connection connection = getConnection();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("select  * from product");
+            PreparedStatement preparedStatement = connection.prepareStatement(SHOW_ALL_PRODUCT);
             // chay roi luu cai truy van tren
             ResultSet resultSet = preparedStatement.executeQuery();
             while ((resultSet.next())) {
@@ -66,14 +61,22 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product save(Product product) {
-        return products.put(product.getId(), product);
+    public Product create(Product product) {
+//        return products.put(product.getId(), product);
+        Connection connection = getConnection();
+        try {
+            PreparedStatement p = connection.prepareStatement(CREATE_NEW_PRODUCT);
+            p.setString(1, product.getName());
+            p.setInt(2, product.getPrice());
+            p.setString(3, product.getDescription());
+            p.setString(4, product.getProducer());
+            p.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return product;
     }
 
-    @Override
-    public Product updateById(int id, Product product) {
-        return products.replace(id, product);
-    }
 
     @Override
     public Product findById(int id) {
@@ -82,7 +85,7 @@ public class ProductService implements IProductService {
         Product product = null;
         Connection connection = getConnection();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("select  * from product where id=? ");
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_PRODUCT_BY_ID);
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -101,22 +104,13 @@ public class ProductService implements IProductService {
         return product;
     }
 
-    @Override
-    public void deleteById(int id) {
-        products.remove(id);
-    }
-
-    @Override
-    public Product findByName(String name) {
-        return products.get(name);
-    }
 
     @Override
     public boolean update(Product product) {
         Connection connection = getConnection();
         boolean check = false;
         try {
-            PreparedStatement p = connection.prepareStatement("update product set name = ?,price =?,description=?,producer=? where id= ?");
+            PreparedStatement p = connection.prepareStatement(UPDATE_PRODUCT);
             p.setString(1, product.getName());
             p.setInt(2, product.getPrice());
             p.setString(3, product.getDescription());
@@ -127,5 +121,26 @@ public class ProductService implements IProductService {
             throwables.printStackTrace();
         }
         return check;
+    }
+
+    @Override
+    public boolean delete(int id) {
+        Connection connection = getConnection();
+        boolean check = false;
+        try {
+            PreparedStatement p = connection.prepareStatement(DELETE_PRODUCT);
+            p.setInt(1, id);
+            check = p.executeUpdate() > 0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return check;
+    }
+
+    /////////////////////////////
+
+    @Override
+    public Product findByName(String name) {
+        return products.get(name);
     }
 }

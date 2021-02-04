@@ -5,15 +5,13 @@ import java.util.List;
 public interface IGeneralService<T> {
     List<T> findAll();
 
-    T save(T t);
-
-    T updateById(int id, T t);
+    T create(T t);
 
     T findById(int id);
-
-    void deleteById(int id);
 
     T findByName(String name);
 
     boolean update(T t);
+
+    boolean delete(int id);
 }

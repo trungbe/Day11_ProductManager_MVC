@@ -14,4 +14,6 @@ public interface IGeneralService<T> {
     void deleteById(int id);
 
     T findByName(String name);
+
+    boolean update(T t);
 }

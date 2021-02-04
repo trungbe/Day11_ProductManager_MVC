@@ -17,7 +17,7 @@ import java.util.List;
 @WebServlet(name = "ProductServlet", urlPatterns = "/products")
 public class ProductServlet extends HttpServlet {
     private static final IProductService productService = new ProductService();
-
+//doGet
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
@@ -167,7 +167,7 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-
+// doPost
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
@@ -179,7 +179,8 @@ public class ProductServlet extends HttpServlet {
                 break;
             }
             case "edit": {
-                updateProduct(request, response);
+//                updateProduct(request, response);
+                update(request,response);
                 break;
             }
             case "delete": {
@@ -189,6 +190,7 @@ public class ProductServlet extends HttpServlet {
 
         }
     }
+
 
 
     private void createProduct(HttpServletRequest request, HttpServletResponse response) {
@@ -236,6 +238,22 @@ public class ProductServlet extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        int price = Integer.parseInt(request.getParameter("price"));
+        String description = request.getParameter("description");
+        String producer = request.getParameter("producer");
+
+        Product p = new Product(id,name,price,description,producer);
+        productService.update(p);
+        response.sendRedirect("/products");
+//        RequestDispatcher requestDispatcher = request.getRequestDispatcher("product/update.jsp");
+//        request.setAttribute("product",p);
+//        requestDispatcher.forward(request,response);
+
     }
 
 }

@@ -12,6 +12,7 @@
             <td><input type="submit" value="Delete"></td>
         </tr>
     </table>
+    <a href="/products"> Back to List Product </a>
 </form>
 </body>
 </html>

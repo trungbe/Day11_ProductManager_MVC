@@ -30,6 +30,7 @@
         </tr>
 
     </table>
+    <a href="/products"> Back to List Product </a>
 </form>
 </body>
 </html>

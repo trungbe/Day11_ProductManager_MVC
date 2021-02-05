@@ -23,5 +23,6 @@
         </tr>
     </c:forEach>
 </table>
+<a href="/products"> Back to List Product </a>
 </body>
 </html>

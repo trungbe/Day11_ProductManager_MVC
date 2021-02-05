@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Product Management</h1>
-<a href="/products">List Product </a>
+<a href="/products"> List Product </a>
 <%--<table>--%>
 <%--  <tr>--%>
 <%--    <td>Name</td>--%>

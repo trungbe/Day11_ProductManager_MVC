@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "ProductServlet", urlPatterns = "/products")
@@ -40,12 +39,12 @@ public class ProductServlet extends HttpServlet {
             case "detail": {
                 break;
             }
-            case "Search": {
+            case "search": {
                 findByName(request, response);
                 break;
             }
             case "sort":
-                sortByName(request,response,productService.sort());
+                sortByName(request, response, productService.sort());
                 break;
             default: {
                 showAllProducts(request, response);
@@ -55,10 +54,10 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void sortByName(HttpServletRequest request, HttpServletResponse response, List<Product> product) {
-        request.setAttribute("products",product);
-        RequestDispatcher requestDispatcher =request.getRequestDispatcher("product/listProduct.jsp");
+        request.setAttribute("products", product);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("product/listProduct.jsp");
         try {
-            requestDispatcher.forward(request,response);
+            requestDispatcher.forward(request, response);
         } catch (ServletException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -66,62 +65,45 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-    private void findByName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("findName");
-        List<Product> products = new ArrayList<Product>();
-        List<Product> productList = productService.findAll();
-        int check = 0;
-        for (Product product : productList) {
-            if (product.getName().contains(name)) {
-                products.add(product);
-                check = 1;
-            }
-        }
-        if (check == 1) {
-            request.setAttribute("findByName", products);
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("product/find.jsp");
-            requestDispatcher.forward(request, response);
-        } else {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("error-404.jsp");
-            requestDispatcher.forward(request, response);
-        }
-    }
-
-//    private void findByName(HttpServletRequest request, HttpServletResponse response) {
-//        String name = request.getParameter("name");
-//        Product product = productService.findByName(name);
-//
-//        RequestDispatcher dispatcher;
-//        if ((product.getName().contains(search))) {
-//
-//            request.setAttribute("product", product);
-//            dispatcher = request.getRequestDispatcher("product/find.jsp");
-//            try {
-//                dispatcher.forward(request, response);
-//            } catch (ServletException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
+//    private void findByName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        String name = request.getParameter("findName");
+//        List<Product> products = new ArrayList<Product>();
+//        List<Product> productList = productService.findAll();
+//        int check = 0;
+//        for (Product product : productList) {
+//            if (product.getName().contains(name)) {
+//                products.add(product);
+//                check = 1;
 //            }
 //        }
-//        if (product == null) {
-//            dispatcher = request.getRequestDispatcher("error-404.jsp");
+//        if (check == 1) {
+//            request.setAttribute("findByName", products);
+//            RequestDispatcher requestDispatcher = request.getRequestDispatcher("product/find.jsp");
+//            requestDispatcher.forward(request, response);
 //        } else {
-//            request.setAttribute("product", product);
-//            dispatcher = request.getRequestDispatcher("product/find.jsp");
-//        }
-//        try {
-//            dispatcher.forward(request, response);
-//        } catch (ServletException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
+//            RequestDispatcher requestDispatcher = request.getRequestDispatcher("error-404.jsp");
+//            requestDispatcher.forward(request, response);
 //        }
 //    }
 
+    private void findByName(HttpServletRequest request, HttpServletResponse response) {
+        String name = request.getParameter("findName");
+        List<Product> product = productService.findByName(name);
+        RequestDispatcher dispatcher;
+        request.setAttribute("products", product);
+        dispatcher = request.getRequestDispatcher("product/listProduct.jsp");
+        try {
+            dispatcher.forward(request, response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showAllProducts(HttpServletRequest request, HttpServletResponse response) {
         List<Product> productList = productService.findAll();
-        request.setAttribute("products", productList);
+        request.setAttribute("products", productList); //name = items
         RequestDispatcher dispatcher = request.getRequestDispatcher("product/listProduct.jsp");
         try {
             dispatcher.forward(request, response);
@@ -207,7 +189,7 @@ public class ProductServlet extends HttpServlet {
 
 
     private void createProduct(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int id = (int) (Math.random() * 10000000);
+        int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         int price = Integer.parseInt(request.getParameter("price"));
         String description = request.getParameter("description");
@@ -215,7 +197,6 @@ public class ProductServlet extends HttpServlet {
         Product product = new Product(id, name, price, description, producer);
         productService.create(product);
         RequestDispatcher dispatcher = request.getRequestDispatcher("product/create.jsp");
-
         try {
             dispatcher.forward(request, response);
         } catch (ServletException e) {
@@ -249,9 +230,7 @@ public class ProductServlet extends HttpServlet {
         int price = Integer.parseInt(request.getParameter("price"));
         String description = request.getParameter("description");
         String producer = request.getParameter("producer");
-
-        Product p = new Product(id, name, price, description, producer);
-        productService.update(p);
+        productService.update(new Product(id, name, price, description, producer));
         response.sendRedirect("/products");
 //        RequestDispatcher requestDispatcher = request.getRequestDispatcher("product/update.jsp");
 //        request.setAttribute("product",p);

@@ -8,10 +8,13 @@
 <body>
 <h1>Product List</h1>
 <button><a href="/products?action=create">Create new product</a></button>
-<form>
-    <input type="text" name="findName">
-    <input  name="action" type="submit" value="Search" >
+
+<form action="products?action=search">
+    <input name="action" value="search" hidden>
+    <input type="text" name="findName" placeholder="enter name">
+    <input type="submit" value="Search">
 </form>
+
 <button><a href="/products?action=sort&name">Sort by name</a></button>
 <%--<button><a href="/products?action=search&name=${product.getName()}">Search</a></button>--%>
 

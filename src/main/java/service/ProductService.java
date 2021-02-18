@@ -13,6 +13,7 @@ public class ProductService implements IProductService {
     public static final String UPDATE_PRODUCT_SQL = "update product set name = ?,price =?,description=?,producer=? where id= ?";
     public static final String DELETE_PRODUCT_SQL = "delete from product where id= ?";
     public static final String SORT_BY_NAME_SQL = "select * from product order by name asc ;";
+    public static final String SEARCH_BY_NAME_SQL = "select * from product where name like ?";
     private String jdbcURL = "jdbc:mysql://localhost:3306/productmanager";
     private String jdbcUser = "root";
     private String jdbcPassword = "";
@@ -45,8 +46,9 @@ public class ProductService implements IProductService {
             PreparedStatement preparedStatement = connection.prepareStatement(SHOW_ALL_PRODUCT_SQL);
             // chay roi luu cai truy van tren
             ResultSet resultSet = preparedStatement.executeQuery();
+            //ResultSet luu ket qua cau query
             while ((resultSet.next())) {
-                int id = resultSet.getInt("id");
+                int id = resultSet.getInt(1);
                 String name = resultSet.getString("name");
                 int price = resultSet.getInt("price");
                 String description = resultSet.getString("description");
@@ -100,7 +102,6 @@ public class ProductService implements IProductService {
         return product;
     }
 
-
     @Override
     public boolean update(Product product) {
         Connection connection = getConnection();
@@ -153,5 +154,28 @@ public class ProductService implements IProductService {
             throwables.printStackTrace();
         }
         return products;
+    }
+
+    @Override
+    public List<Product> findByName(String name) {
+        List<Product> product = new ArrayList<>();
+        Connection connection = getConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_BY_NAME_SQL);
+            preparedStatement.setString(1, "%"+name+"%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while ((resultSet.next())) {
+                int id = resultSet.getInt("id");
+                String name1 = resultSet.getString("name");
+                int price = resultSet.getInt("price");
+                String description = resultSet.getString("description");
+                String producer = resultSet.getString("producer");
+                product.add(new Product(id,name1, price, description, producer));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return product;
     }
 }
